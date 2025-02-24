@@ -1,0 +1,16 @@
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\obj\Debug\face-builder.csproj.AssemblyReference.cache
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\obj\Debug\MainWindow.g.cs
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\obj\Debug\App.g.cs
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\obj\Debug\GeneratedInternalTypeHelper.g.cs
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\obj\Debug\face-builder_MarkupCompile.cache
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\obj\Debug\face-builder_MarkupCompile.lref
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\bin\Debug\face-builder.exe.config
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\bin\Debug\face-builder.exe
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\bin\Debug\face-builder.pdb
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\obj\Debug\MainWindow.baml
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\obj\Debug\face-builder.g.resources
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\obj\Debug\face_builder.Properties.Resources.resources
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\obj\Debug\face-builder.csproj.GenerateResource.cache
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\obj\Debug\face-builder.csproj.CoreCompileInputs.cache
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\obj\Debug\face-builder.exe
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\obj\Debug\face-builder.pdb
