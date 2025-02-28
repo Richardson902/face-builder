@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace face_builder
@@ -121,8 +122,19 @@ namespace face_builder
             }
         }
 
-        private ObservableCollection<string> _facesList;
-        public ObservableCollection<string> FacesList
+        private int _selectedFaceId;
+        public int SelectedFaceId
+        {
+            get { return _selectedFaceId; }
+            set
+            {
+                _selectedFaceId = value;
+                OnPropertyChanged(nameof(SelectedFaceId));
+            }
+        }
+
+        private ObservableCollection<KeyValuePair<int, string>> _facesList;
+        public ObservableCollection<KeyValuePair<int, string>> FacesList
         {
             get { return _facesList; }
             set
@@ -132,13 +144,14 @@ namespace face_builder
             }
         }
 
-        private string _selectedFace;
-        public string SelectedFace
+        private KeyValuePair<int, string> _selectedFace;
+        public KeyValuePair<int, string> SelectedFace
         {
             get { return _selectedFace; }
             set
             {
                 _selectedFace = value;
+                SelectedFaceId = value.Key;
                 OnPropertyChanged(nameof(SelectedFace));
                 LoadSelectedFaceData();
             }
@@ -146,9 +159,9 @@ namespace face_builder
 
         private void LoadSelectedFaceData()
         {
-            if (!string.IsNullOrEmpty(SelectedFace))
+            if (SelectedFaceId > 0)
             {
-                _dataManager.LoadSelectedFaceData(this, SelectedFace);
+                _dataManager.LoadSelectedFaceData(this, SelectedFaceId);
             }
             }
 
@@ -169,8 +182,30 @@ namespace face_builder
         {
             if (CanSaveFace())
             {
+                int faceId = -1;
 
-                _dataManager.SaveFaceData(this);
+                if (IsNewFace)
+                {
+                    faceId = _dataManager.SaveFaceData(this);
+                }
+                else
+                {
+                    _dataManager.UpdateFaceData(this, SelectedFaceId);
+                    faceId = SelectedFaceId;
+                }
+                LoadFacesToComboBox();
+                SelectedTabIndex = 2;
+
+                if (faceId > 0)
+                {
+                    var faceToSelect = FacesList.FirstOrDefault(f => f.Key == faceId);
+
+                    if (!faceToSelect.Equals(default(KeyValuePair<int, string>))) 
+                    {
+                        SelectedFace = faceToSelect;
+                    }
+                }
+
             }
             else
             {
@@ -192,7 +227,13 @@ namespace face_builder
         //Create load data method that populates the properties of the model.
         private void LoadFacesToComboBox()
         {
-            FacesList = new ObservableCollection<string>(_dataManager.LoadFacesComboBox());
+            var faces = _dataManager.LoadFacesComboBox();
+            FacesList.Clear();
+
+            foreach (var face in faces)
+            {
+                FacesList.Add(face);
+            }
 
         }
 
@@ -234,7 +275,7 @@ namespace face_builder
             _dataManager = new DataManager();
             IsNewFace = true;
 
-            FacesList = new ObservableCollection<string>();
+            FacesList = new ObservableCollection<KeyValuePair<int, string>>();
 
             HairNextCommand = new CommandHandler(() => FaceBuilder.HairNext(), true);
             HairPrevCommand = new CommandHandler(() => FaceBuilder.HairPrev(), true);
@@ -251,8 +292,6 @@ namespace face_builder
             HelpImagesCommand = new CommandHandler(() => HelpManager.DisplayAddImages(), true);
             SaveFaceCommand = new CommandHandler(() => {
                 SaveFace();
-                LoadFacesToComboBox();
-                SelectedTabIndex = 2;
                 }, true);
             ClearFaceDataCommand = new CommandHandler(() => {
                 FaceBuilder.ClearCanvas();
@@ -280,8 +319,8 @@ namespace face_builder
             // Testing new implementation
             UpdateCanvasTestCommand = new CommandHandler(() => FaceBuilder.UpdateCanvas(), true);
 
-            OccupationOptions = new ObservableCollection<string> { "Developer", "Artist", "Designer", "Scientist" };
-            HobbyOptions = new ObservableCollection<string> { "Gaming", "Reading", "Sports", "Hiking" };
+            OccupationOptions = new ObservableCollection<string> { "", "Developer", "Artist", "Designer", "Scientist" };
+            HobbyOptions = new ObservableCollection<string> { "", "Gaming", "Reading", "Sports", "Hiking" };
 
         }
 

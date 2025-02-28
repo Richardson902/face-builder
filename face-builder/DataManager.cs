@@ -13,11 +13,15 @@ namespace face_builder
     {
         string connectionString = Utility.GetConnectionString();
 
-        public void SaveFaceData(ViewModel model)
+        public int SaveFaceData(ViewModel model)
         {
+            int newFaceId = -1;
+
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO Person (firstName, lastName, city, hair, eyes, nose, mouth) VALUES (@firstName, @lastName, @city, @hair, @eyes, @nose, @mouth)";
+                string query = "INSERT INTO Person (firstName, lastName, city, hair, eyes, nose, mouth) " +
+                    "VALUES (@firstName, @lastName, @city, @hair, @eyes, @nose, @mouth); " +
+                    "SELECT SCOPE_IDENTITY();"; // returns newly created id
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
@@ -32,12 +36,17 @@ namespace face_builder
                     try
                     {
                         connection.Open();
-                        int rowsAffected = command.ExecuteNonQuery();
+                        var result = command.ExecuteScalar();
 
-                        if (rowsAffected > 0)
+                        if (result != null && result != DBNull.Value)
+                        {
+                            newFaceId = Convert.ToInt32(result);
                             MessageBox.Show("Face data saved successfully.");
+                        }
                         else
+                        {
                             MessageBox.Show("Error saving face data.");
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -45,15 +54,16 @@ namespace face_builder
                     }
                 }
             }
+            return newFaceId;
         }
 
-        public List<string> LoadFacesComboBox()
+        public List<KeyValuePair<int, string>> LoadFacesComboBox()
         {
-            List<string> faces = new List<string>();
+            List<KeyValuePair<int, string>> faces = new List<KeyValuePair<int, string>>();
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "SELECT firstName, lastName FROM Person ORDER BY id DESC";
+                string query = "SELECT id, firstName, lastName FROM Person ORDER BY id DESC";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
@@ -64,8 +74,9 @@ namespace face_builder
                         {
                             while (reader.Read())
                             {
+                                int id = (int)reader["id"];
                                 string fullName = $"{reader["firstName"]} {reader["lastName"]}";
-                                faces.Add(fullName);
+                                faces.Add(new KeyValuePair<int, string>(id, fullName));
                             }
                         }
                     }
@@ -78,15 +89,15 @@ namespace face_builder
             return faces;
         }
 
-        public void LoadSelectedFaceData(ViewModel model, string fullName)
+        public void LoadSelectedFaceData(ViewModel model, int faceId)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "SELECT firstName, lastName, city, hair, eyes, nose, mouth FROM Person WHERE firstname + ' ' + lastName = @fullName";
+                string query = "SELECT firstName, lastName, city, hair, eyes, nose, mouth FROM Person WHERE id = @id";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@fullName", fullName);
+                    command.Parameters.AddWithValue("@id", faceId);
 
                     try
                     {
@@ -109,6 +120,45 @@ namespace face_builder
                         MessageBox.Show($"Error loading face data: {ex.Message}");
                     }
 
+                }
+            }
+        }
+
+        public void UpdateFaceData(ViewModel model, int faceId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = "UPDATE Person SET firstName = @firstName, lastName = @lastName, city = @city, hair = @hair, eyes = @eyes, nose = @nose, mouth = @mouth WHERE id = @id";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@id", faceId);
+                    command.Parameters.AddWithValue("@firstName", model.FirstName);
+                    command.Parameters.AddWithValue("@lastName", model.LastName);
+                    command.Parameters.AddWithValue("@city", model.Address);
+                    command.Parameters.AddWithValue("@hair", FaceBuilder.ImageManager.HairIndex);
+                    command.Parameters.AddWithValue("@eyes", FaceBuilder.ImageManager.EyeIndex);
+                    command.Parameters.AddWithValue("@nose", FaceBuilder.ImageManager.NoseIndex);
+                    command.Parameters.AddWithValue("@mouth", FaceBuilder.ImageManager.MouthIndex);
+
+                    try
+                    {
+                        connection.Open();
+                        int rowsAffected = command.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show("Face data updated successfully.");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Error updating face data.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                 }
             }
         }

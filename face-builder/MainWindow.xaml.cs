@@ -31,7 +31,6 @@ namespace face_builder
         // Clears canvas, and then draws image based on what flags are true
         public void UpdateCanvas()
         {
-            System.Windows.Forms.MessageBox.Show("UpdateCanvas");
 
             myCanvas.Children.Clear();
             summaryCanvas.Children.Clear();
