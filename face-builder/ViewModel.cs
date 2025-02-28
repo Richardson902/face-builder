@@ -235,6 +235,49 @@ namespace face_builder
                 FacesList.Add(face);
             }
 
+            if (FacesList.Count > 0)
+            {
+
+                SelectedTabIndex = 2;
+            }
+            else
+            {
+                SelectedTabIndex = 0;
+            }
+
+        }
+
+        private void DeleteFace()
+        {
+            if (SelectedFaceId > 0)
+            {
+                _dataManager.DeleteFace(SelectedFaceId);
+
+                //Reload face list after deletion
+                LoadFacesToComboBox();
+
+                if (FacesList.Count > 0)
+                {
+                    //Select first face in the list
+                    SelectedFace = FacesList[0];
+                }
+                else
+                {
+                    ClearData();
+                    FaceBuilder.ClearCanvas();
+
+                    //Reset selected face to avoid invalid reference
+                    SelectedFaceId = -1;
+
+                    // Create default empty key value pair
+                    SelectedFace = new KeyValuePair<int, string>(-1, string.Empty);
+
+                    IsNewFace = true; // Just in case anything crazy happens
+
+                    SelectedTabIndex = 0;
+
+                }
+            }
         }
 
         public void nextTab()
@@ -267,8 +310,8 @@ namespace face_builder
         public ICommand EditFaceCommand { get; }
         public ICommand LoadFaceCommand { get; }
 
-        public ICommand UpdateCanvasTestCommand { get; }
         public ICommand NewFaceCommand { get; }
+        public ICommand DeleteFaceCommand { get; }
 
         public ViewModel()
         {
@@ -306,7 +349,6 @@ namespace face_builder
             }, true);
             LoadFaceCommand = new CommandHandler(() => {
                 LoadFacesToComboBox();
-                SelectedTabIndex = 2;
             }, true);
             NewFaceCommand = new CommandHandler(() =>
             {
@@ -315,9 +357,7 @@ namespace face_builder
                 IsNewFace = true;
                 SelectedTabIndex = 0;
                 }, true);
-
-            // Testing new implementation
-            UpdateCanvasTestCommand = new CommandHandler(() => FaceBuilder.UpdateCanvas(), true);
+            DeleteFaceCommand = new CommandHandler(() => DeleteFace(), true);
 
             OccupationOptions = new ObservableCollection<string> { "", "Developer", "Artist", "Designer", "Scientist" };
             HobbyOptions = new ObservableCollection<string> { "", "Gaming", "Reading", "Sports", "Hiking" };

@@ -228,7 +228,7 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <Button x:Name="Edit" Content="Edit" HorizontalAlignment="Left" Grid.Column="0" Margin="5" Command="{Binding EditFaceCommand}"></Button>
-                                <Button x:Name="Delete" Content="Delete" HorizontalAlignment="Right" Command="{Binding UpdateCanvasTestCommand}" Grid.Column="1" Margin="5" />
+                                <Button x:Name="Delete" Content="Delete" HorizontalAlignment="Right" Command="{Binding DeleteFaceCommand}" Grid.Column="1" Margin="5" />
                             </Grid>
                         </StackPanel>
                     </Grid>
