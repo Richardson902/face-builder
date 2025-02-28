@@ -14,7 +14,7 @@
         <!-- Menu Bar (Global) -->
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
-                <MenuItem Header="_New Face" Command="{Binding ClearFaceDataCommand}"/>
+                <MenuItem Header="_New Face" Command="{Binding NewFaceCommand}"/>
                 <MenuItem Header="_Load Face" Command="{Binding LoadFaceCommand}"/>
             </MenuItem>
             <MenuItem Header="Face" >
@@ -167,7 +167,7 @@
                             <!-- Example Fields -->
                             <StackPanel Orientation="Horizontal" Margin="5">
                                 <Label Content="Faces List:" FontWeight="Bold" VerticalAlignment="Center"/>
-                                <ComboBox Width="100" ItemsSource="{Binding FacesList}" SelectedItem="{Binding SelectedFace, Mode=TwoWay}"/>
+                                <ComboBox Width="100" ItemsSource="{Binding FacesList}" SelectedItem="{Binding SelectedFace, Mode=TwoWay}" SelectedIndex="0"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Margin="5">
@@ -228,7 +228,7 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Button x:Name="Edit" Content="Edit" HorizontalAlignment="Left" Grid.Column="0" Margin="5"></Button>
+                                <Button x:Name="Edit" Content="Edit" HorizontalAlignment="Left" Grid.Column="0" Margin="5" Command="{Binding EditFaceCommand}"></Button>
                                 <Button x:Name="UpdateCanvasTest" Content="UpCanvas" Width="40" HorizontalAlignment="Right" Command="{Binding UpdateCanvasTestCommand}" Grid.Column="2" Margin="5" />
                             </Grid>
                         </StackPanel>

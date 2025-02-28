@@ -4,12 +4,12 @@
 winexe
 C#
 .cs
-G:\.School\Year-2\Semester-2\PROG2500-CSharp\projects\face-builder\face-builder\obj\Debug\
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\face-builder\obj\Debug\
 face_builder
 none
 false
 DEBUG;TRACE
-G:\.School\Year-2\Semester-2\PROG2500-CSharp\projects\face-builder\face-builder\App.xaml
+G:\.School\Year-2\Semester-2\PROG2500-CSharp\face-builder\face-builder\App.xaml
 1219584333
 3-1206512786
 12780160633

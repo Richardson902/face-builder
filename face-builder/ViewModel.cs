@@ -26,13 +26,13 @@ namespace face_builder
         }
 
         private bool _isNewFace;
-        public bool NewFace
+        public bool IsNewFace
         {
             get { return _isNewFace; }
             set
             {
                 _isNewFace = value;
-                OnPropertyChanged(nameof(NewFace));
+                OnPropertyChanged(nameof(IsNewFace));
             }
         }
 
@@ -193,6 +193,7 @@ namespace face_builder
         private void LoadFacesToComboBox()
         {
             FacesList = new ObservableCollection<string>(_dataManager.LoadFacesComboBox());
+
         }
 
         public void nextTab()
@@ -226,10 +227,12 @@ namespace face_builder
         public ICommand LoadFaceCommand { get; }
 
         public ICommand UpdateCanvasTestCommand { get; }
+        public ICommand NewFaceCommand { get; }
 
         public ViewModel()
         {
             _dataManager = new DataManager();
+            IsNewFace = true;
 
             FacesList = new ObservableCollection<string>();
 
@@ -258,12 +261,21 @@ namespace face_builder
             }, true);
             NextTabCommand = new CommandHandler(() => nextTab(), true);
             PrevTabCommand = new CommandHandler(() => prevTab(), true);
-            EditFaceCommand = new CommandHandler(() => SelectedTabIndex = 0, true);
+            EditFaceCommand = new CommandHandler(() => {
+                SelectedTabIndex = 0;
+                IsNewFace = false;
+            }, true);
             LoadFaceCommand = new CommandHandler(() => {
                 LoadFacesToComboBox();
                 SelectedTabIndex = 2;
-            },
-                true);
+            }, true);
+            NewFaceCommand = new CommandHandler(() =>
+            {
+                FaceBuilder.ClearCanvas();
+                ClearData();
+                IsNewFace = true;
+                SelectedTabIndex = 0;
+                }, true);
 
             // Testing new implementation
             UpdateCanvasTestCommand = new CommandHandler(() => FaceBuilder.UpdateCanvas(), true);

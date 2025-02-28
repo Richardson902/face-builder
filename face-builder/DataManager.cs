@@ -53,7 +53,7 @@ namespace face_builder
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "SELECT firstName, lastName FROM Person";
+                string query = "SELECT firstName, lastName FROM Person ORDER BY id DESC";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
