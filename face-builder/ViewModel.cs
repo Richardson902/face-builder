@@ -15,27 +15,7 @@ namespace face_builder
     {
         private readonly DataManager _dataManager;
 
-        private int _selectedTabIndex;
-        public int SelectedTabIndex
-        {
-            get { return _selectedTabIndex; }
-            set
-            {
-                _selectedTabIndex = value;
-                OnPropertyChanged(nameof(SelectedTabIndex));
-            }
-        }
-
-        private bool _isNewFace;
-        public bool IsNewFace
-        {
-            get { return _isNewFace; }
-            set
-            {
-                _isNewFace = value;
-                OnPropertyChanged(nameof(IsNewFace));
-            }
-        }
+        // ------ Face Data Model Properties ------
 
         private string _firstName;
 
@@ -122,6 +102,19 @@ namespace face_builder
             }
         }
 
+        // ------ Navigation ------
+        private int _selectedTabIndex;
+        public int SelectedTabIndex
+        {
+            get { return _selectedTabIndex; }
+            set
+            {
+                _selectedTabIndex = value;
+                OnPropertyChanged(nameof(SelectedTabIndex));
+            }
+        }
+
+        // ------- Tracking Selected Face Id------
         private int _selectedFaceId;
         public int SelectedFaceId
         {
@@ -133,6 +126,7 @@ namespace face_builder
             }
         }
 
+        // ------- Faces List ------
         private ObservableCollection<KeyValuePair<int, string>> _facesList;
         public ObservableCollection<KeyValuePair<int, string>> FacesList
         {
@@ -144,6 +138,31 @@ namespace face_builder
             }
         }
 
+        // ------- Search ------
+        private string _searchText;
+        public string SearchText
+        {
+            get { return _searchText; }
+            set
+            {
+                _searchText = value;
+                OnPropertyChanged(nameof(SearchText));
+            }
+        }
+
+        // ------- Is New Face Flag ------
+        private bool _isNewFace;
+        public bool IsNewFace
+        {
+            get { return _isNewFace; }
+            set
+            {
+                _isNewFace = value;
+                OnPropertyChanged(nameof(IsNewFace));
+            }
+        }
+
+        // ------- Selected Face ------
         private KeyValuePair<int, string> _selectedFace;
         public KeyValuePair<int, string> SelectedFace
         {
@@ -157,13 +176,15 @@ namespace face_builder
             }
         }
 
+
+        // ------- Methods ------
         private void LoadSelectedFaceData()
         {
             if (SelectedFaceId > 0)
             {
                 _dataManager.LoadSelectedFaceData(this, SelectedFaceId);
             }
-            }
+        }
 
         public bool CanSaveFace()
         {
@@ -224,7 +245,6 @@ namespace face_builder
             IsCatLover = false;
         }
 
-        //Create load data method that populates the properties of the model.
         private void LoadFacesToComboBox()
         {
             var faces = _dataManager.LoadFacesComboBox();
@@ -280,6 +300,35 @@ namespace face_builder
             }
         }
 
+        private void SearchFace()
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                MessageBox.Show("Please enter a name to search");
+                return;
+            }
+
+            if (FacesList.Count == 0)
+            {
+                LoadFacesToComboBox();
+            }
+
+            var matchingFaces = FacesList.Where(face => face.Value.ToLower().Contains(SearchText.ToLower())).ToList();
+
+            if (matchingFaces.Count > 0)
+            {
+                SelectedFace = matchingFaces[0];
+
+                // Can show quantity of matching faces later i guess
+            }
+            else
+            {
+                MessageBox.Show("No matching faces found.");
+            }
+
+            SearchText = string.Empty;
+        }
+
         public void nextTab()
         {
             SelectedTabIndex++;
@@ -290,8 +339,7 @@ namespace face_builder
             SelectedTabIndex--;
         }
 
-        public ICommand NextTabCommand { get; }
-        public ICommand PrevTabCommand { get; }
+        // ------ Facial Features ------
         public ICommand HairNextCommand { get; }
         public ICommand HairPrevCommand { get; }
         public ICommand EyesNextCommand { get; }
@@ -300,26 +348,38 @@ namespace face_builder
         public ICommand NosePrevCommand { get; }
         public ICommand MouthNextCommand { get; }
         public ICommand MouthPrevCommand { get; }
+
+        // ------ Actions ------
         public ICommand RandomizeCommand { get; }
         public ICommand ClearFaceCommand { get; }
+
+        // ------ Help ------
         public ICommand HelpKeybindsCommand { get; }
         public ICommand HelpAboutCommand { get; }
         public ICommand HelpImagesCommand { get; }
+
+        // ------ Navigation ------
+        public ICommand NextTabCommand { get; }
+        public ICommand PrevTabCommand { get; }
+
+        // ------ Face Data ------
         public ICommand SaveFaceCommand { get; }
         public ICommand ClearFaceDataCommand { get; }
         public ICommand EditFaceCommand { get; }
         public ICommand LoadFaceCommand { get; }
-
         public ICommand NewFaceCommand { get; }
         public ICommand DeleteFaceCommand { get; }
+        public ICommand SearchFaceCommand { get; }
 
         public ViewModel()
         {
             _dataManager = new DataManager();
+
             IsNewFace = true;
 
             FacesList = new ObservableCollection<KeyValuePair<int, string>>();
 
+            // Facial features
             HairNextCommand = new CommandHandler(() => FaceBuilder.HairNext(), true);
             HairPrevCommand = new CommandHandler(() => FaceBuilder.HairPrev(), true);
             EyesNextCommand = new CommandHandler(() => FaceBuilder.EyesNext(), true);
@@ -328,37 +388,52 @@ namespace face_builder
             NosePrevCommand = new CommandHandler(() => FaceBuilder.NosePrev(), true);
             MouthNextCommand = new CommandHandler(() => FaceBuilder.MouthNext(), true);
             MouthPrevCommand = new CommandHandler(() => FaceBuilder.MouthPrev(), true);
+
+            // Actions
             RandomizeCommand = new CommandHandler(() => FaceBuilder.Randomize(), true);
             ClearFaceCommand = new CommandHandler(() => FaceBuilder.ClearCanvas(), true);
+
+
+            // Help
             HelpKeybindsCommand = new CommandHandler(() => HelpManager.DisplayKeyBindings(), true);
             HelpAboutCommand = new CommandHandler(() => HelpManager.DisplayAbout(), true);
             HelpImagesCommand = new CommandHandler(() => HelpManager.DisplayAddImages(), true);
-            SaveFaceCommand = new CommandHandler(() => {
-                SaveFace();
-                }, true);
-            ClearFaceDataCommand = new CommandHandler(() => {
+
+            // Navigation
+            NextTabCommand = new CommandHandler(() => nextTab(), true);
+            PrevTabCommand = new CommandHandler(() => prevTab(), true);
+
+            // Face Data
+            SaveFaceCommand = new CommandHandler(() => SaveFace(), true);
+            LoadFaceCommand = new CommandHandler(() => LoadFacesToComboBox(), true);
+            DeleteFaceCommand = new CommandHandler(() => DeleteFace(), true);
+            SearchFaceCommand = new CommandHandler(() => SearchFace(), true);
+
+            ClearFaceDataCommand = new CommandHandler(() => 
+            {
                 FaceBuilder.ClearCanvas();
                 ClearData();
                 SelectedTabIndex = 0;
+
             }, true);
-            NextTabCommand = new CommandHandler(() => nextTab(), true);
-            PrevTabCommand = new CommandHandler(() => prevTab(), true);
-            EditFaceCommand = new CommandHandler(() => {
+
+            EditFaceCommand = new CommandHandler(() => 
+            {
                 SelectedTabIndex = 0;
                 IsNewFace = false;
+
             }, true);
-            LoadFaceCommand = new CommandHandler(() => {
-                LoadFacesToComboBox();
-            }, true);
+
             NewFaceCommand = new CommandHandler(() =>
             {
                 FaceBuilder.ClearCanvas();
                 ClearData();
                 IsNewFace = true;
                 SelectedTabIndex = 0;
-                }, true);
-            DeleteFaceCommand = new CommandHandler(() => DeleteFace(), true);
 
+            }, true);
+
+            // Combo Box Data
             OccupationOptions = new ObservableCollection<string> { "", "Developer", "Artist", "Designer", "Scientist" };
             HobbyOptions = new ObservableCollection<string> { "", "Gaming", "Reading", "Sports", "Hiking" };
 

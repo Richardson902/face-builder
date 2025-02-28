@@ -155,24 +155,21 @@
                     <Grid Grid.Column="0" Background="LightGray">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
-                            <!-- New StackPanel -->
                             <RowDefinition Height="*"/>
-                            <!-- Existing StackPanel -->
                         </Grid.RowDefinitions>
 
-                        <!-- New StackPanel (Above the Existing One) -->
                         <StackPanel Grid.Row="0" Background="LightBlue" VerticalAlignment="Top" Margin="5">
                             <TextBlock Text="Load Face" FontSize="16" FontWeight="Bold" Margin="10" HorizontalAlignment="Center"/>
 
-                            <!-- Example Fields -->
                             <StackPanel Orientation="Horizontal" Margin="5">
                                 <Label Content="Faces List:" FontWeight="Bold" VerticalAlignment="Center"/>
                                 <ComboBox Width="100" ItemsSource="{Binding FacesList}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedItem="{Binding SelectedFace, Mode=TwoWay}" SelectedIndex="0"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Margin="5">
-                                <Label Content="Search" FontWeight="Bold" VerticalAlignment="Center"/>
-                                <TextBox Text="" Margin="10" Width="100"/>
+                                <Label Content="Search by name" FontWeight="Bold" VerticalAlignment="Center"/>
+                                <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="center" Margin="0,0,10,0"/>
+                                <Button Content="Search" Command="{Binding SearchFaceCommand}" Width="80"/>
                             </StackPanel>
                         </StackPanel>
 
